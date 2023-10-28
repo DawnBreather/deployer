@@ -1,0 +1,87 @@
+package main
+
+import (
+  "cloud.google.com/go/firestore"
+  "context"
+  firebase "firebase.google.com/go"
+  "fmt"
+  "google.golang.org/api/option"
+  "google.golang.org/grpc/codes"
+  "google.golang.org/grpc/status"
+  "log"
+)
+
+var client *firestore.Client
+var sa = option.WithCredentialsFile("gcp.seraphic-bliss-34014.gcp-woner.jso")
+var ctx = context.Background()
+
+func initDB() {
+  colref := client.Collection("users")
+  colref.Doc("user1").Set(ctx, map[string]interface{}{
+    "id":    "user1",
+    "name":  "username",
+    "state": 0,
+  })
+  colref.Doc("user2").Set(ctx, map[string]interface{}{
+    "id":    "user2",
+    "name":  "username",
+    "state": 1,
+  })
+  colref.Doc("user3").Set(ctx, map[string]interface{}{
+    "id":    "user3",
+    "name":  "username",
+    "state": 3,
+  })
+  colref.Doc("user4").Set(ctx, map[string]interface{}{
+    "id":    "user4",
+    "name":  "username",
+    "state": 1,
+  })
+  colref.Doc("user5").Set(ctx, map[string]interface{}{
+    "id":    "user5",
+    "name":  "username",
+    "state": 5,
+  })
+}
+
+func main() {
+  conf := &firebase.Config{ProjectID: "test-7f148"}
+  app, err := firebase.NewApp(ctx, conf)
+  if err != nil {
+    log.Fatalln(err)
+  }
+
+  client, err = app.Firestore(ctx)
+  if err != nil {
+    log.Fatalln(err)
+  }
+  defer client.Close()
+  fmt.Println("firebase app is initialized.")
+
+  initDB()
+
+  // Get user2 and user4
+  snapIter := client.Collection("users").Where("state", "==", 1).Snapshots(ctx)
+  defer snapIter.Stop()
+
+  for {
+    snap, err := snapIter.Next()
+    if err != nil {
+      log.Fatalln(err)
+    }
+
+    fmt.Printf("change size: %d\n", len(snap.Changes))
+    for _, diff := range snap.Changes {
+      fmt.Printf("diff: %+v\n", diff)
+      fmt.Printf("%+v\n", diff.Doc.Data())
+    }
+    // DeadlineExceeded will be returned when ctx is cancelled.
+    if status.Code(err) == codes.DeadlineExceeded {
+      fmt.Printf("Deadline exceeded\n")
+    }
+    if err != nil {
+      fmt.Printf("ERROR: Snapshots.Next: %v", err)
+    }
+
+  }
+}
