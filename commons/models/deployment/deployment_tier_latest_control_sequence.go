@@ -20,7 +20,8 @@ func (l *LatestControlSequence) Execute(d *Deployment) {
 
 	GetJsonEntryFromRedis(fmt.Sprintf(string(RDB_LATEST_CONTROL_SEQUENCE_STATUS_PATH), d.Name(), d.tierName(), agentId), &inStatusLatestCotrolSequence)
 
-	if inStatusLatestCotrolSequence.CreatedAt != l.CreatedAt {
+	//if inStatusLatestCotrolSequence.CreatedAt != l.CreatedAt {
+	if true {
 
 		for _, command := range l.CommandSequence {
 
