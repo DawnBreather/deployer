@@ -1,62 +1,84 @@
 package deployment
 
-import "time"
+import (
+  "time"
+)
+
+const sleepDuration = 1 * time.Second
 
 func (d *Deployment) PullConfigurationFromRedisWithDecryptionAndDeploy() {
+  d.InitializeTiersFields(d.tierName())
 
-	d.InitializeTiersFields(d.tierName())
+  for {
+    time.Sleep(sleepDuration)
 
-	for {
-		time.Sleep(1 * time.Second)
+    if err := d.pullAndDecryptSecrets(); err != nil {
+      continue
+    }
 
-		err := GetYamlEntryFromRedisWithDecryption(d.Secrets, d.SecretsRedisConfigurationEntryKey(), &d.Secrets, d)
-		if err != nil {
-			continue
-		}
-		d.Secrets.DecryptEncryptedValues()
+    if err := d.pullAndDecryptTierConfiguration(); err != nil {
+      continue
+    }
+    IsTierConfigurationInitialized = true
 
-		err = GetYamlEntryFromRedisWithDecryption(d.Secrets, d.TierRedisConfigurationEntry(d.tierName()), d.Tiers[d.tierName()], d)
-		if err != nil {
-			continue
-		}
-		IsTierConfigurationInitialized = true
+    if err := d.pullAndExecuteControlSequence(); err != nil {
+      continue
+    }
 
-		err = GetYamlEntryFromRedisWithDecryption(d.Secrets, d.ControlSequenceRedisConfigurationEntry(d.tierName()), &d.Tiers[d.tierName()].LatestControlSequence, d)
-		if err != nil {
-			continue
-		}
-		d.Tiers[d.tierName()].LatestControlSequence.Execute(d)
+    return
+  }
+}
 
-		return
-	}
+func (d *Deployment) pullAndDecryptSecrets() error {
+  err := GetYamlEntryFromRedisWithDecryption(d.Secrets, d.SecretsRedisConfigurationEntryKey(), &d.Secrets, d)
+  if err != nil {
+    return err
+  }
+  d.Secrets.DecryptEncryptedValues()
+  return nil
+}
+
+func (d *Deployment) pullAndDecryptTierConfiguration() error {
+  return GetYamlEntryFromRedisWithDecryption(d.Secrets, d.TierRedisConfigurationEntry(d.tierName()), d.Tiers[d.tierName()], d)
+}
+
+func (d *Deployment) pullAndExecuteControlSequence() error {
+  err := GetYamlEntryFromRedisWithDecryption(d.Secrets, d.ControlSequenceRedisConfigurationEntry(d.tierName()), &d.Tiers[d.tierName()].LatestControlSequence, d)
+  if err != nil {
+    return err
+  }
+  d.Tiers[d.tierName()].LatestControlSequence.Execute(d)
+  return nil
 }
 
 func (d *Deployment) PullConfigurationFromRedisWithoutDecryptionForMultipleTiers(tierNames []string) {
+  for {
+    time.Sleep(sleepDuration)
 
-	for {
-		time.Sleep(1 * time.Second)
+    if err := d.pullSecretsWithoutDecryption(); err != nil {
+      continue
+    }
 
-		err := GetYamlEntryFromRedisWithoutDecryption(d.SecretsRedisConfigurationEntryKey(), &d.Secrets)
-		if err != nil {
-			continue
-		}
+    for _, tierName := range tierNames {
+      if err := d.pullTierConfigurationWithoutDecryption(tierName); err != nil {
+        continue
+      }
+    }
 
-		for _, tierName := range tierNames {
+    return
+  }
+}
 
-			d.InitializeTiersFields(tierName)
+func (d *Deployment) pullSecretsWithoutDecryption() error {
+  return GetYamlEntryFromRedisWithoutDecryption(d.SecretsRedisConfigurationEntryKey(), &d.Secrets)
+}
 
-			err = GetYamlEntryFromRedisWithoutDecryption(d.TierRedisConfigurationEntry(tierName), d.Tiers[tierName])
-			if err != nil {
-				continue
-			}
+func (d *Deployment) pullTierConfigurationWithoutDecryption(tierName string) error {
+  d.InitializeTiersFields(tierName)
 
-			err = GetYamlEntryFromRedisWithoutDecryption(d.ControlSequenceRedisConfigurationEntry(tierName), &d.Tiers[tierName].LatestControlSequence)
-			if err != nil {
-				continue
-			}
+  if err := GetYamlEntryFromRedisWithoutDecryption(d.TierRedisConfigurationEntry(tierName), d.Tiers[tierName]); err != nil {
+    return err
+  }
 
-		}
-
-		return
-	}
+  return GetYamlEntryFromRedisWithoutDecryption(d.ControlSequenceRedisConfigurationEntry(tierName), &d.Tiers[tierName].LatestControlSequence)
 }

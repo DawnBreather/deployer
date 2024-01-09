@@ -9,27 +9,54 @@ import (
   "strings"
 )
 
+const ec2InstanceMetadataURL = "http://169.254.169.254/latest/meta-data/instance-id"
+
 func AgentName() string {
+  hostname, err := getHostName()
+  if err != nil {
+    hostname = generateUUID()
+  }
+
+  instanceID, err := getEC2InstanceID()
+  if err == nil {
+    return instanceID
+  }
+
+  return sanitizeHostName(hostname)
+}
+
+func getHostName() (string, error) {
   hostname, err := os.Hostname()
   if err != nil {
     logrus.Errorf("[E] getting { hostname }: %v", err)
-    hostname = uuid.New().String()
+    return "", err
   }
-  resp, _ := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
-  if resp != nil {
-    defer resp.Body.Close()
+  return hostname, nil
+}
 
-    if resp.StatusCode == http.StatusOK {
-      bodyBytes, err := io.ReadAll(resp.Body)
-      if err != nil {
-        logrus.Errorf("[E] reading EC2 instance name from response body: %v", err)
-      }
-      return string(bodyBytes)
+func generateUUID() string {
+  return uuid.New().String()
+}
+
+func getEC2InstanceID() (string, error) {
+  resp, err := http.Get(ec2InstanceMetadataURL)
+  if err != nil {
+    logrus.Errorf("[E] making request to EC2 instance metadata: %v", err)
+    return "", err
+  }
+  defer resp.Body.Close()
+
+  if resp.StatusCode == http.StatusOK {
+    bodyBytes, err := io.ReadAll(resp.Body)
+    if err != nil {
+      logrus.Errorf("[E] reading EC2 instance name from response body: %v", err)
+      return "", err
     }
+    return string(bodyBytes), nil
   }
+  return "", nil
+}
 
-  //remove unsupported symbols (for firebase nodes)
-  hostname = strings.ReplaceAll(hostname, ".", "-")
-
-  return hostname
+func sanitizeHostName(hostname string) string {
+  return strings.ReplaceAll(hostname, ".", "-")
 }

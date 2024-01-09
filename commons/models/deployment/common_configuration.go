@@ -8,19 +8,6 @@ import (
 	"time"
 )
 
-var (
-//SECRETS_REDIS_CONFIGURATION_ENTRY          = fmt.Sprintf("configuration/%s/secrets", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID))
-//TIER_REDIS_CONFIGURATION_ENTRY             = fmt.Sprintf("configuration/%s/tiers/%s", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID), strings.ReplaceAll(os.Getenv(ABZ_DEPLOYER_AGENT_TIER_ID), "::", "."))
-//CONTROL_SEQUENCE_REDIS_CONFIGURATION_ENTRY = fmt.Sprintf("configuration/%s/control_sequences/%s", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID), strings.ReplaceAll(os.Getenv(ABZ_DEPLOYER_AGENT_TIER_ID), "::", "."))
-)
-
-var (
-//SECRETS_REDIS_CHANNEL = fmt.Sprintf("%s/secrets", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID))
-//TIER_REDIS_CHANNEL                 = fmt.Sprintf("%s/tiers/%s", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID), strings.ReplaceAll(os.Getenv(ABZ_DEPLOYER_AGENT_TIER_ID), "::", "."))
-//CONTROL_SEQUENCE_REDIS_CHANNEL     = fmt.Sprintf("%s/control_sequences/%s", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID), strings.ReplaceAll(os.Getenv(ABZ_DEPLOYER_AGENT_TIER_ID), "::", "."))
-//CONTROL_SEQUENCE_REDIS_CHANNEL_REF = fmt.Sprintf("%s/control_sequences/%s", os.Getenv(ABZ_DEPLOYER_AGENT_ENVIRONMENT_ID), strings.ReplaceAll(os.Getenv(ABZ_DEPLOYER_AGENT_TIER_ID), "::", "."))
-)
-
 func (d *Deployment) ControlSequenceRedisChannel(tierName string) string {
 	return fmt.Sprintf("%s/control_sequences/%s", d.Name(), strings.ReplaceAll(tierName, "::", "."))
 }
