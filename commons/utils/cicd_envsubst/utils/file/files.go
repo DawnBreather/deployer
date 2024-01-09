@@ -1,7 +1,7 @@
 package file
 
 import (
-	path2 "cicd_envsubst/utils/path"
+	path2 "deployer/commons/utils/cicd_envsubst/utils/path"
 	"log"
 	"os"
 	"path/filepath"

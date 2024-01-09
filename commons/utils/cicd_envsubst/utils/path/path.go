@@ -1,7 +1,7 @@
 package path
 
 import (
-	"cicd_envsubst/utils/logger"
+	"deployer/commons/utils/cicd_envsubst/utils/logger"
 	"os"
 	"path/filepath"
 	"strings"

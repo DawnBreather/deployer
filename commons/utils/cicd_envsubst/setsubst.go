@@ -1,9 +1,9 @@
 package cicd_envsubst
 
 import (
-	"cicd_envsubst/utils/env_var"
-	"cicd_envsubst/utils/file"
-	pth "cicd_envsubst/utils/path"
+	"deployer/commons/utils/cicd_envsubst/utils/env_var"
+	"deployer/commons/utils/cicd_envsubst/utils/file"
+	pth "deployer/commons/utils/cicd_envsubst/utils/path"
 	"github.com/goccy/go-yaml"
 	"github.com/jessevdk/go-flags"
 	"os"

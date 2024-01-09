@@ -1,9 +1,9 @@
 package deployment
 
 import (
+	"deployer/binaries"
 	"encoding/base64"
 	"fmt"
-	"github.com/DawnBreather/go-commons/app/deployer/binaries"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"

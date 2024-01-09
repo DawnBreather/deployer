@@ -23,5 +23,4 @@ type EnvironmentsConfigurationsGitAdapter struct {
 
 func (e EnvironmentsConfigurationsGitAdapter) cloneRepository() {
 	e.destinationPath.RemoveIfExists()
-
 }

@@ -1,10 +1,10 @@
 package cicd_envsubst
 
 import (
-	"cicd_envsubst/utils/env_var"
-	"cicd_envsubst/utils/file"
-	"cicd_envsubst/utils/path"
-	"cicd_envsubst/utils/placeholder"
+	"deployer/commons/utils/cicd_envsubst/utils/env_var"
+	"deployer/commons/utils/cicd_envsubst/utils/file"
+	"deployer/commons/utils/cicd_envsubst/utils/path"
+	"deployer/commons/utils/cicd_envsubst/utils/placeholder"
 	"fmt"
 	"github.com/thoas/go-funk"
 	"os"

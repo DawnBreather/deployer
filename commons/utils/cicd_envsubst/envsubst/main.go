@@ -1,6 +1,6 @@
 package main
 
-import . "cicd_envsubst"
+import . "deployer/commons/utils/cicd_envsubst"
 
 func main() {
 	Execute()

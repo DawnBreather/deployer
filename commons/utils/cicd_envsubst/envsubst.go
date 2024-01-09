@@ -1,9 +1,9 @@
 package cicd_envsubst
 
 import (
-	"cicd_envsubst/utils/file"
-	"cicd_envsubst/utils/logger"
-	pth "cicd_envsubst/utils/path"
+	"deployer/commons/utils/cicd_envsubst/utils/file"
+	"deployer/commons/utils/cicd_envsubst/utils/logger"
+	pth "deployer/commons/utils/cicd_envsubst/utils/path"
 	"github.com/jessevdk/go-flags"
 	"os"
 	"regexp"

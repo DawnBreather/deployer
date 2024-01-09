@@ -1,8 +1,8 @@
 package placeholder
 
 import (
-	"cicd_envsubst/utils/env_var"
-	"cicd_envsubst/utils/logger"
+	"deployer/commons/utils/cicd_envsubst/utils/env_var"
+	"deployer/commons/utils/cicd_envsubst/utils/logger"
 	"regexp"
 	"strings"
 )

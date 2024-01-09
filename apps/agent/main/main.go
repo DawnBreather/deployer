@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	logrus.Infof("Version 1.0.10")
+	logrus.Infof("Version 1.0.11")
 
 	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableQuote: true,

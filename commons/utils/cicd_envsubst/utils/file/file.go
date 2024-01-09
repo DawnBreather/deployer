@@ -1,10 +1,10 @@
 package file
 
 import (
-	"cicd_envsubst/utils/env_var"
-	"cicd_envsubst/utils/logger"
-	"cicd_envsubst/utils/placeholder"
 	"crypto/md5"
+	"deployer/commons/utils/cicd_envsubst/utils/env_var"
+	"deployer/commons/utils/cicd_envsubst/utils/logger"
+	"deployer/commons/utils/cicd_envsubst/utils/placeholder"
 	"encoding/base64"
 	"errors"
 	"fmt"
